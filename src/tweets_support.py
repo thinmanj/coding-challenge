@@ -3,13 +3,17 @@ import pytz
 from sets import Set
 
 
+def _clean_escape(source):
+    return source.replace('\n', ' ').replace('\t', ' ')
+
+
 def detect_remove_unicode(source, remove=True):
     try:
         source.decode('ascii')
     except UnicodeEncodeError:
-        return (True, source.encode('ascii', 'ignore').decode('ascii').replace('\n', ' ').replace('\t', ' ')) if remove else (True, source)
+        return (True, _clean_escape(source.encode('ascii', 'ignore').decode('ascii'))) if remove else (True, source)
     else:
-        return (False, source.replace('\n', ' ').replace('\t', ' '))
+        return (False, _clean_escape(source))
 
 
 def _get_text_cannonical(source, key='text'):
