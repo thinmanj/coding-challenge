@@ -1,5 +1,6 @@
 from datetime import datetime
 import pytz
+from sets import Set
 
 
 def detect_remove_unicode(source, remove=True):
@@ -44,6 +45,8 @@ def calculate_average(source):
         size = len(hashtags) - 1
         if size > 0:
             for tag in hashtags:
-                tags_map[tag] = tags_map.get(tag, 0) + size
-
-    return (sum(tags_map.values())*1.0, len(tags_map))
+                try:
+                    tags_map[tag].update(hashtags)
+                except KeyError:
+                    tags_map[tag] = Set(hashtags)
+    return (sum(map(lambda x: len(x) - 1, tags_map.values()))*1.0, len(tags_map))
